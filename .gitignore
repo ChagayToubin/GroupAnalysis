@@ -1,6 +1,7 @@
 # JetBrains IDEs (PyCharm, IntelliJ, etc.)
 ../../../.idea/
 *.iml
+.idea/
 
 # Python bytecode
 __pycache__/
