@@ -1,8 +1,7 @@
 # JetBrains IDEs (PyCharm, IntelliJ, etc.)
 ../../../.idea/
 *.iml
-.env
-downloader_session.session
+
 # Python bytecode
 __pycache__/
 *.py[cod]
