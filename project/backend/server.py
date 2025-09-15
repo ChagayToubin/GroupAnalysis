@@ -1,20 +1,24 @@
-from fastapi import FastAPI, BackgroundTasks
+from fastapi import FastAPI
 from pydantic import BaseModel
-from typing import Dict
+from fastapi.middleware.cors import CORSMiddleware
+
 # Create app instance
 back_app = FastAPI()
 
+# 👇 הוספת CORS מיד אחרי יצירת ה־app
+back_app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # אפשר לשים ["http://localhost:3000"] אם אתה רוצה לאפשר רק לפרונט שלך
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-class StringDict(BaseModel):
-    data: Dict[str, str]
+class Identifier(BaseModel):
+    id: str
 
-
-# Simple route
-@back_app.post("/start")
-async def home(data:StringDict):
+@back_app.post("/api/snapshot")
+async def home(data: Identifier):
     print(data)
-    # פו מתחיל כל התהליך ברגע שהוא מקבל להתחיל לפעול והוא מקבל את הבקשה
 
-    return {"message": data}
-
-
+    return {"message": "לחגדלגדחלדגחלגדחלחגדמנלחגדמלחנגדלחנגדלחגדנלחגדנלחגדנ"}
