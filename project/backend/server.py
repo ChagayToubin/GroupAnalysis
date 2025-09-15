@@ -1,14 +1,20 @@
 from fastapi import FastAPI
-
+from pydantic import BaseModel
+from typing import Dict
 # Create app instance
 back_app = FastAPI()
 
-# Simple route
-@back_app.get("/")
-async def home():
-    return {"message": "Hello, FastAPI is running!"}
 
-# Another route
-@back_app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}, welcome to FastAPI!"}
+class StringDict(BaseModel):
+    data: Dict[str, str]
+
+
+# Simple route
+@back_app.post("/start")
+async def home(data:StringDict):
+    print(data)
+    # פו מתחיל כל התהליך ברגע שהוא מקבל להתחיל לפעול והוא מקבל את הבקשה
+
+    return {"message": data}
+
+

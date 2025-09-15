@@ -16,6 +16,7 @@ class ManagerServer:
         config_b = uvicorn.Config(client_root, host="127.0.0.1", port=8001, log_level="debug")
         server_b = uvicorn.Server(config_b)
 
+
         await asyncio.gather(
             server_a.serve(),
             server_b.serve(),
