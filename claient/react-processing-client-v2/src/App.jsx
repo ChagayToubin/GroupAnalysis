@@ -5,12 +5,14 @@ export default function App() {
   return (
     <div className="container">
       <header className="header">
-        <h1>מערכת עיבוד — צד לקוח</h1>
-        <p className="subtitle">בלי אימות • שליחה ידנית • הצגת סטטוס/תוצאות</p>
+        <h1>מערכת עיבוד — צד לקוח (V2)</h1>
+        <p className="subtitle">בהמשך אני אוסיף פה הסבר בלא בלא בלא</p>
       </header>
+
       <ProcessingPage />
+
       <footer className="footer">
-        <small>© 2025</small>
+        <small>winners group © 2025</small>
       </footer>
     </div>
   )
