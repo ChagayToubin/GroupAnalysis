@@ -1,5 +1,5 @@
 import os
-
+import json
 
 class Settings:
     # ---------------- MongoDB ----------------
@@ -12,5 +12,18 @@ class Settings:
     ELASTIC_URI= os.getenv("ELASTIC_URI", "http://localhost:9200")
 
     # ---------------- Kafka ----------------
-    KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
-    KAFKA_TOPIC = os.getenv("KAFKA_TOPIC", "default_topic")
+    kafka_host = os.getenv("KAFKA_HOST", "localhost")
+    kafka_port = os.getenv("KAFKA_PORT", 9092)
+
+    configs_for_kafka_pro = {
+        'bootstrap_servers': f"{kafka_host}:{kafka_port}",
+        'value_serializer': lambda v: json.dumps(v).encode('utf-8')
+
+    }
+    configs_for_kafka_con = {
+        'bootstrap_servers': f"{kafka_host}:{kafka_port}",
+        'group_id': "my-consumer",
+        'auto_offset_reset': "earliest",
+        'enable_auto_commit': 'True',
+        'value_deserializer': lambda v: json.loads(v.decode("utf-8"))
+    }
