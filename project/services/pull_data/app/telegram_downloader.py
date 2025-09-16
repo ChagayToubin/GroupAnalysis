@@ -2,7 +2,7 @@ import os
 import asyncio
 from telethon import TelegramClient, events
 from collections import defaultdict
-from kafka_producer import SetKafkaProducer
+from project.services.pull_data.app.kafka_producer import SetKafkaProducer
 
 class TelegramDownloader:
     def __init__(self, api_id, api_hash, storage_manager, session_name="downloader_session"):

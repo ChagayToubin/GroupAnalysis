@@ -33,6 +33,5 @@ class DataFlow:
                 json_to_send[k] = 0
             else:
                 json_to_send[k] = round(v * 100 / my_count ,1)
-
         return json_to_send
 
