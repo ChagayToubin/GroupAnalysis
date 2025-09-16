@@ -1,26 +1,15 @@
 // src/components/Chart.jsx
 import React, { useMemo, useState } from "react";
 import {
-  ResponsiveContainer,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  XAxis,
-  YAxis,
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
+   ResponsiveContainer, CartesianGrid, Tooltip, Legend, XAxis, YAxis,
+   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
+   RadialBarChart, RadialBar,
+   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis
+ } from "recharts";
 
 export default function Chart({ metrics, defaultType = "bar" }) {
-  // שמירה על אותו לוג
-  console.log(metrics);
+  // // שמירה על אותו לוג
+  // console.log(metrics);
 
   const [type, setType] = useState(defaultType);
 
@@ -42,7 +31,7 @@ export default function Chart({ metrics, defaultType = "bar" }) {
     );
   }
 
-  const height = 280; // נשאר כמו קודם
+  const height = 380; 
   const COLORS = ["#3b82f6", "#82ca9d", "#ffc658", "#ff7f7f", "#8dd1e1", "#a4de6c"];
 
   const Controls = () => (
@@ -50,8 +39,9 @@ export default function Chart({ metrics, defaultType = "bar" }) {
       {[
         ["bar", "מקלות"],
         ["line", "קו"],
-        ["area", "שטח"],
         ["pie", "עוגה"],
+        // ["radialBar", "רדיאלי"],
+        // ["radar", "מכ״ם"],
       ].map(([val, label]) => (
         <button
           key={val}
@@ -109,14 +99,46 @@ export default function Chart({ metrics, defaultType = "bar" }) {
           </ResponsiveContainer>
         )}
 
-        {type === "area" && (
+        {/* {type === "radialBar" && (
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data}>
-              <CommonAxes />
-              <Area type="monotone" dataKey="value" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.3} />
-            </AreaChart>
+            <RadialBarChart
+              data={data}
+              innerRadius="20%"     // דונאט עדין
+              outerRadius="90%"
+              startAngle={90}
+              endAngle={-270}       // כיוון שעון
+            >
+              <Tooltip />
+              <Legend />
+              <RadialBar
+                dataKey="value"
+                background
+                clockWise
+                cornerRadius={10}
+                label={{ position: "insideStart", fill: "#fff" }}
+              />
+            </RadialBarChart>
           </ResponsiveContainer>
         )}
+        {type === "radar" && (
+          <ResponsiveContainer width="100%" height="100%">
+            <RadarChart data={data}>
+              <PolarGrid />
+              <PolarAngleAxis dataKey="name" />
+              <PolarRadiusAxis />
+              <Tooltip />
+              <Legend />
+              <Radar
+                name="כמות"
+                dataKey="value"
+                stroke="#3b82f6"
+                fill="#3b82f6"
+                fillOpacity={0.35}
+              />
+            </RadarChart>
+          </ResponsiveContainer>
+        )} */}
+
 
         {type === "pie" && (
           <ResponsiveContainer width="100%" height="100%">
@@ -131,6 +153,12 @@ export default function Chart({ metrics, defaultType = "bar" }) {
                 cy="50%"
                 outerRadius={Math.min(140, height / 2 - 10)}
                 label
+                labelLine={false}
+                // label={({ name, value, percent, x, y }) => (
+                // <text x={x} y={y} fill="#fff" textAnchor="middle" dominantBaseline="central">
+                //   {name}: {value} ({(percent * 100).toFixed(0)}%)
+                // </text>
+                // )}
                 isAnimationActive
               >
                 {data.map((_, i) => (
