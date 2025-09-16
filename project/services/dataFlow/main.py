@@ -5,7 +5,7 @@ from group_type_analyzer import DataFlow
 data = DAL()
 classifier = DataFlow()
 skip = 0
-def main():
+def main(name):
 
     all_data = data.dal(skip)
 
