@@ -47,7 +47,7 @@ export default function ResultActions({
               checked={autoRefreshEnabled}
               onChange={e => onToggleAutoRefresh(e.target.checked)}
             />
-            <label htmlFor="autoRef" className="muted">השבת רענון אוטומטי</label>
+            <label htmlFor="autoRef" className="muted">רענון אוטומטי</label>
           </div>
         </div>
         <div>

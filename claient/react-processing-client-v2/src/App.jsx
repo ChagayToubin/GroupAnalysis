@@ -5,7 +5,7 @@ export default function App() {
   return (
     <div className="container">
       <header className="header">
-        <h1>מערכת עיבוד — צד לקוח (V2)</h1>
+        <h1>מערכת ניתוח טלגרם </h1>
         <p className="subtitle">בהמשך אני אוסיף פה הסבר בלא בלא בלא</p>
       </header>
 

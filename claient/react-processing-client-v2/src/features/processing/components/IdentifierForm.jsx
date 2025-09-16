@@ -17,7 +17,7 @@ export default function IdentifierForm({ onConnect, disabled }) {
     <form className="card" onSubmit={submit}>
       <div className="row cols-2">
         <div>
-          <label>מזהה (יכול להיות URL או שם קבוצה)</label>
+          <label>(URL או שם קבוצה) מזהה</label>
           <input
             type="text"
             value={id}

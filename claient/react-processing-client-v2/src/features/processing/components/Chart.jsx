@@ -1,62 +1,146 @@
-import React from 'react'
+// src/components/Chart.jsx
+import React, { useMemo, useState } from "react";
+import {
+  ResponsiveContainer,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  XAxis,
+  YAxis,
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
 
-export default function Chart({ metrics }) {
-  if (!metrics || metrics.length === 0) {
-    return <div className="card"><div className="muted">אין נתונים להצגה</div></div>
-  }
+export default function Chart({ metrics, defaultType = "bar" }) {
+  // שמירה על אותו לוג
+  console.log(metrics);
 
-  const padding = { top: 16, right: 16, bottom: 36, left: 36 }
-  const width = 800
-  const height = 280
-  const innerW = width - padding.left - padding.right
-  const innerH = height - padding.top - padding.bottom
+  const [type, setType] = useState(defaultType);
 
-  const maxVal = Math.max(...metrics.map(m => Number(m.value) || 0))
-  const barW = (innerW / metrics.length) * 0.7
-  const gap = (innerW / metrics.length) * 0.3
+  // נרמול המידע: [{ name, value }]
+  const data = useMemo(
+    () =>
+      (Array.isArray(metrics) ? metrics : []).map((m) => ({
+        name: String(m?.name ?? ""),
+        value: Number(m?.value) || 0,
+      })),
+    [metrics]
+  );
 
-  const bars = metrics.map((m, idx) => {
-    const v = Number(m.value) || 0
-    const h = maxVal === 0 ? 0 : (v / maxVal) * innerH
-    const x = padding.left + idx * (barW + gap)
-    const y = padding.top + (innerH - h)
+  if (!data.length) {
     return (
-      <g key={idx}>
-        <rect x={x} y={y} width={barW} height={h} rx="6" ry="6" fill="#3b82f6" />
-        <text x={x + barW / 2} y={height - 10} textAnchor="middle" fontSize="12" fill="#8aa0b3">
-          {m.name}
-        </text>
-        <text x={x + barW / 2} y={y - 6} textAnchor="middle" fontSize="12" fill="#e6edf3">
-          {v}
-        </text>
-      </g>
-    )
-  })
-
-  const ticks = 4
-  const tickEls = []
-  for (let i = 0; i <= ticks; i++) {
-    const v = (maxVal / ticks) * i
-    const y = padding.top + (innerH - (innerH / ticks) * i)
-    tickEls.push(
-      <g key={i}>
-        <line x1={padding.left - 6} y1={y} x2={width - padding.right} y2={y} stroke="#223043" strokeDasharray="3,3" />
-        <text x={padding.left - 10} y={y + 4} textAnchor="end" fontSize="11" fill="#8aa0b3">
-          {v.toFixed(0)}
-        </text>
-      </g>
-    )
+      <div className="card">
+        <div className="muted">אין נתונים להצגה</div>
+      </div>
+    );
   }
+
+  const height = 280; // נשאר כמו קודם
+  const COLORS = ["#3b82f6", "#82ca9d", "#ffc658", "#ff7f7f", "#8dd1e1", "#a4de6c"];
+
+  const Controls = () => (
+    <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginBottom: 8 }}>
+      {[
+        ["bar", "מקלות"],
+        ["line", "קו"],
+        ["area", "שטח"],
+        ["pie", "עוגה"],
+      ].map(([val, label]) => (
+        <button
+          key={val}
+          onClick={() => setType(val)}
+          aria-pressed={type === val}
+          style={{
+            padding: "6px 10px",
+            borderRadius: 8,
+            border: "1px solid #ddd",
+            background: type === val ? "#111" : "#fff",
+            color: type === val ? "#fff" : "#111",
+            cursor: "pointer",
+          }}
+          type="button"
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+  );
+
+  const CommonAxes = () => (
+    <>
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="name" tick={{ fontSize: 12 }} height={36} />
+      <YAxis tick={{ fontSize: 12 }} />
+      <Tooltip />
+      <Legend />
+    </>
+  );
 
   return (
-    <div className="card chart-wrap">
-      <svg width="100%" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Bar chart">
-        <rect x="0" y="0" width={width} height={height} fill="transparent" />
-        {tickEls}
-        {bars}
-      </svg>
+    <div className="card chart-wrap" style={{ padding: 12 }}>
+      <Controls />
+      <div style={{ width: "100%", height }}>
+        {type === "bar" && (
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={data}>
+              <CommonAxes />
+              <Bar dataKey="value" name="כמות">
+                {data.map((_, i) => (
+                  <Cell key={i} fill={COLORS[i % COLORS.length]} radius={[6, 6, 0, 0]} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        )}
+
+        {type === "line" && (
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={data}>
+              <CommonAxes />
+              <Line type="monotone" dataKey="value" stroke="#3b82f6" dot />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
+
+        {type === "area" && (
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={data}>
+              <CommonAxes />
+              <Area type="monotone" dataKey="value" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.3} />
+            </AreaChart>
+          </ResponsiveContainer>
+        )}
+
+        {type === "pie" && (
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Tooltip />
+              <Legend />
+              <Pie
+                data={data}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                outerRadius={Math.min(140, height / 2 - 10)}
+                label
+                isAnimationActive
+              >
+                {data.map((_, i) => (
+                  <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                ))}
+              </Pie>
+            </PieChart>
+          </ResponsiveContainer>
+        )}
+      </div>
     </div>
-  )
+  );
 }
-
-

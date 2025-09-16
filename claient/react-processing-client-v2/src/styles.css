@@ -17,11 +17,13 @@ body {
   color: var(--text);
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   line-height: 1.45;
+  direction: rtl;
+  text-align: right;
 }
 
 .container { max-width: 960px; margin: 0 auto; padding: 24px; }
 
-.header { margin-bottom: 16px; }
+.header { margin-bottom: 16px;text-align: center; }
 .header h1 { margin: 0; font-size: 28px; letter-spacing: 0.3px; }
 .subtitle { margin: 6px 0 0 0; color: var(--muted); }
 

@@ -2,9 +2,11 @@ import React, { useEffect, useRef, useState } from 'react'
 import IdentifierForm from '../components/IdentifierForm.jsx'
 import ResultActions from '../components/ResultActions.jsx'
 import Chart from '../components/Chart.jsx'
+import PieChart from '../components/PieChart.jsx'
+import ChartSwitcher from '../components/ChartSwitcher.jsx'
 import Spinner from '../../../shared/components/Spinner.jsx'
 import Alert from '../../../shared/components/Alert.jsx'
-import { getSnapshot } from '../../../app/api.js'
+import { getSnapshot , getInformation} from '../../../app/api.js'
 import {
   saveIdentifier, loadIdentifier, clearIdentifier,
   saveAutoRefresh, loadAutoRefresh,
@@ -69,8 +71,14 @@ export default function ProcessingPage() {
     setIsFetching(true)
     setMessage('')
     try {
-      const snap = await getSnapshot(identifier)
-      setData(snap)
+      const snap = await getInformation(identifier)
+      const fresh =
+      Array.isArray(snap)
+        ? snap.map(item => ({ ...item }))
+        : (snap && typeof snap === 'object' ? { ...snap } : snap)
+
+      setData(fresh)  
+      // setData(snap)
       setLastUpdated(Date.now())
       setStatus('connected')
       setMessage('עודכן בהצלחה')
@@ -82,13 +90,30 @@ export default function ProcessingPage() {
     }
   }
 
+  async function onConnection() {
+    if (!identifier || isFetching) return
+    setIsFetching(true)
+    setMessage('')
+    try {
+      const snap = await getSnapshot(identifier)
+      setData(null)
+      setStatus('connected')
+      setMessage('חובר בהצלחה')
+    } catch (err) {
+      setStatus('error')
+      setMessage(err?.message || 'שגיאה בחיבור')
+    } finally {
+      setIsFetching(false)
+    }
+  }
+
   function handleConnect(id) {
     saveIdentifier(id)
     setIdentifier(id)
     setStatus('connected')
     setData(null)
     setLastUpdated(null)
-    refreshNow()
+    onConnection()
   }
 
   function handleDisconnect() {
@@ -120,17 +145,6 @@ export default function ProcessingPage() {
 
       {status !== 'idle' && (
         <div className="card">
-          <div style={{display:'flex', gap:8, alignItems:'center', justifyContent:'space-between', flexWrap:'wrap'}}>
-            <div>
-              <strong>API Base:</strong>{' '}
-              <span className="muted">{import.meta.env.VITE_API_BASE || '(same origin)'}</span>
-            </div>
-            <div style={{display:'flex', gap:8}}>
-              <button className="btn" onClick={refreshNow} disabled={!identifier || isFetching}>רענן עכשיו</button>
-              <button className="btn danger" onClick={handleDisconnect} disabled={isFetching}>איפוס מזהה</button>
-            </div>
-          </div>
-
           <div className="spacer" />
 
           <ResultActions
@@ -158,6 +172,13 @@ export default function ProcessingPage() {
       <div>
         {status === 'connected' && <Chart metrics={metrics} />}
       </div>
+
+      {/* <div>
+        {status === 'connected' && <ChartSwitcher data={[metrics]} defaultType="bar" rtl height={340} />}
+      </div>
+      <div style={{ width: 360 }}>
+        {status === 'connected' && <PieChart metrics={metrics} donut={false} />}
+      </div> */}
     </div>
   )
 }
