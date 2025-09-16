@@ -66,8 +66,6 @@ class TelegramDownloader:
         print(f"📡 Listening to group: {group_link} (press Ctrl+C to stop)")
         await self.client.run_until_disconnected()
 
-
-
     async def _process_single_message(self, message, group_link, text):
         msg_id = message.id
         user = message.sender_id
@@ -75,11 +73,32 @@ class TelegramDownloader:
         album_id = getattr(message, "grouped_id", None)
         media_files = []
 
+        # ✅ בדיקה מקדימה – האם יש בכלל משהו לשמור
+        media_present = message.photo or message.document or (text and text.strip())
+        if not media_present:
+            print(f"⚠️ Message {msg_id} is empty, skipped MongoDB and Kafka")
+            return
+
+        def _publish_to_kafka(file_id, category):
+            """פונקציה פנימית – שולחת ל-Kafka רק אם file_id תקין"""
+            if not file_id:
+                print(f"⚠️ Message {msg_id}: file_id is None, skipping Kafka publish")
+                return
+            self.kafka_producer.producer_publish(self.topic, {
+                "message_id": msg_id,
+                "group_link": group_link,
+                "file_id": str(file_id),
+                "category": category
+            })
+            self.kafka_producer.producer_flush()
+            print(f"📤 Message {msg_id}: published to Kafka with file_id={file_id}, category={category}")
+
         # ---- תמונות ----
         if message.photo:
             tmp_path = os.path.join(self.download_folder, f"photo_{msg_id}.jpg")
             path = await message.download_media(file=tmp_path)
-            if path and os.path.exists(path):
+
+            if path and os.path.exists(path) and os.path.getsize(path) > 0:
                 file_id = self.storage.save_file(path, {
                     "message_id": msg_id,
                     "group_link": group_link,
@@ -89,22 +108,19 @@ class TelegramDownloader:
                     "date": date,
                     "album_id": album_id
                 })
-                await asyncio.sleep(0.1)
-                self.kafka_producer.producer_publish(self.topic, {
-                    "message_id": msg_id,
-                    "group_link": group_link,
-                    "file_id": str(file_id),
-                    "category": "image"
-                })
-                self.kafka_producer.producer_flush()
+                print(f"🔹 After save_file: file_id = {file_id}, path exists? {os.path.exists(path)}")
+                _publish_to_kafka(file_id, "image")
                 os.remove(path)
                 media_files.append({"category": "image", "file_id": str(file_id)})
+            else:
+                print(f"⚠️ Message {msg_id}: photo download failed or empty")
 
         # ---- וידאו/אודיו/מסמכים ----
         elif message.document:
             tmp_path = os.path.join(self.download_folder, f"doc_{msg_id}")
             path = await message.download_media(file=tmp_path)
-            if path and os.path.exists(path):
+
+            if path and os.path.exists(path) and os.path.getsize(path) > 0:
                 mime_type = message.document.mime_type or ""
                 if "video" in mime_type:
                     category = "video"
@@ -122,23 +138,20 @@ class TelegramDownloader:
                     "date": date,
                     "album_id": album_id
                 })
-                await asyncio.sleep(0.1)
-                self.kafka_producer.producer_publish(self.topic, {
-                    "message_id": msg_id,
-                    "group_link": group_link,
-                    "file_id": str(file_id),
-                    "category": category
-                })
-                self.kafka_producer.producer_flush()
+                print(f"🔹 After save_file: file_id = {file_id}, path exists? {os.path.exists(path)}")
+                _publish_to_kafka(file_id, category)
                 os.remove(path)
                 media_files.append({"category": category, "file_id": str(file_id)})
+            else:
+                print(f"⚠️ Message {msg_id}: document download failed or empty")
 
         # ---- טקסט בלבד ----
         if text and not media_files:
             tmp_path = os.path.join(self.download_folder, f"text_{msg_id}.txt")
             with open(tmp_path, "w", encoding="utf-8") as f:
                 f.write(text)
-            if os.path.exists(tmp_path):
+
+            if os.path.exists(tmp_path) and os.path.getsize(tmp_path) > 0:
                 file_id = self.storage.save_file(tmp_path, {
                     "message_id": msg_id,
                     "group_link": group_link,
@@ -148,15 +161,11 @@ class TelegramDownloader:
                     "date": date,
                     "album_id": album_id
                 })
-                await asyncio.sleep(0.1)
-                self.kafka_producer.producer_publish(self.topic, {
-                    "message_id": msg_id,
-                    "group_link": group_link,
-                    "file_id": str(file_id),
-                    "category": "text"
-                })
-                self.kafka_producer.producer_flush()
+                print(f"🔹 After save_file: file_id = {file_id}, path exists? {os.path.exists(tmp_path)}")
+                _publish_to_kafka(file_id, "text")
                 os.remove(tmp_path)
                 media_files.append({"category": "text", "file_id": str(file_id)})
+            else:
+                print(f"⚠️ Message {msg_id}: text file empty or not created")
 
         print(f"💾 Saved message {msg_id} with {len(media_files)} media files")
