@@ -14,6 +14,7 @@ class DataFlow:
             self.my_json = {}
             self.my_count = 0
             self.json_to_send = {}
+
         else:
             if my_dict["category"] == "text":
                 if my_dict["classify"] in self.my_json:
