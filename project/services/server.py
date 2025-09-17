@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import time
 import threading
 import asyncio
+import subprocess
 
 from project.services.pull_data.app.telegram_manager import TelegramManager
 pull=TelegramManager()
@@ -38,20 +39,17 @@ class Identifier(BaseModel):
 
 @back_app.post("/init")
 async def snapshot(data: Identifier):
-
+    print(type(data))
     # מפעיל שני threads במקביל
-    asyncio.create_task(
+    # asyncio.create_task(
+    #
+    #     pull.monitor_group(data.id))
+    subprocess.Popen(["python", "server.py"], creationflags=subprocess.CREATE_NEW_CONSOLE)
 
-        pull.monitor_group("https://t.me/likti_mohran")  )
 
-    asyncio.create_task(gg())
+
+    # asyncio.create_task(gg())
     # asyncio.create_task(asyncio.to_thread(kafka_blocking))
-
-
-
-
-
-    print("-----------------8743843874387-----")
 
     # מחזיר תשובה מיידית ללקוח
     return {"message": f"שתי המשימות עבור {data.id} התחילו לרוץ במקביל"}
@@ -60,5 +58,6 @@ async def snapshot(data: Identifier):
 @back_app.post("/get_info")
 def  get_info(data: Identifier):
 
-    v=data_flow.menger()
+    v=data_flow.menger(data.id)
+    print(v)
     return v

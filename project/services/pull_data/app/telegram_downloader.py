@@ -18,6 +18,11 @@ class TelegramDownloader:
 
     async def download_group_messages(self, group_link: str, limit=1000):
         """מוריד הודעות קיימות מהקבוצה כולל אלבומים"""
+
+        # ✅ לוודא שהלקוח מחובר
+        if not self.client.is_connected():
+            await self.client.connect()
+
         group = await self.client.get_entity(group_link)
         print(f"✅ Connected to group: {group.title}")
 
@@ -44,6 +49,11 @@ class TelegramDownloader:
 
     async def start_listening(self, group_link):
         """מתחיל להאזין להודעות חדשות בזמן אמת"""
+
+        # ✅ לוודא שהלקוח מחובר
+        if not self.client.is_connected():
+            await self.client.connect()
+
         @self.client.on(events.NewMessage(chats=group_link))
         async def handler(event):
             message = event.message
@@ -66,7 +76,6 @@ class TelegramDownloader:
 
         print(f"📡 Listening to group: {group_link} (press Ctrl+C to stop)")
         await self.client.run_until_disconnected()
-
 
     async def _process_single_message(self, message, group_link, text):
         msg_id = message.id

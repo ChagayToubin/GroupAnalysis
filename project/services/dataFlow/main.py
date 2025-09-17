@@ -7,8 +7,8 @@ class Menger:
         self.data = DAL()
         self.classifier = DataFlow()
 
-    def menger(self):
-        all_data = self.data.dal("https://t.me/+ztOtIXepdDVkYjE0")
+    def menger(self,url):
+        all_data = self.data.dal(url)
         dic=self.classifier.data_classifier(all_data)
         return dic
 
