@@ -2,7 +2,8 @@ import os
 import asyncio
 from telethon import TelegramClient, events
 from collections import defaultdict
-from kafka_producer import SetKafkaProducer
+
+from project.services.pull_data.app.kafka_producer import SetKafkaProducer
 
 class TelegramDownloader:
     def __init__(self, api_id, api_hash, storage_manager, session_name="downloader_session"):
@@ -66,6 +67,7 @@ class TelegramDownloader:
         print(f"📡 Listening to group: {group_link} (press Ctrl+C to stop)")
         await self.client.run_until_disconnected()
 
+
     async def _process_single_message(self, message, group_link, text):
         msg_id = message.id
         user = message.sender_id
@@ -93,12 +95,14 @@ class TelegramDownloader:
             self.kafka_producer.producer_flush()
             print(f"📤 Message {msg_id}: published to Kafka with file_id={file_id}, category={category}")
 
+
         # ---- תמונות ----
         if message.photo:
             tmp_path = os.path.join(self.download_folder, f"photo_{msg_id}.jpg")
             path = await message.download_media(file=tmp_path)
 
             if path and os.path.exists(path) and os.path.getsize(path) > 0:
+
                 file_id = self.storage.save_file(path, {
                     "message_id": msg_id,
                     "group_link": group_link,
@@ -115,12 +119,14 @@ class TelegramDownloader:
             else:
                 print(f"⚠️ Message {msg_id}: photo download failed or empty")
 
+
         # ---- וידאו/אודיו/מסמכים ----
         elif message.document:
             tmp_path = os.path.join(self.download_folder, f"doc_{msg_id}")
             path = await message.download_media(file=tmp_path)
 
             if path and os.path.exists(path) and os.path.getsize(path) > 0:
+
                 mime_type = message.document.mime_type or ""
                 if "video" in mime_type:
                     category = "video"
@@ -145,6 +151,7 @@ class TelegramDownloader:
             else:
                 print(f"⚠️ Message {msg_id}: document download failed or empty")
 
+
         # ---- טקסט בלבד ----
         if text and not media_files:
             tmp_path = os.path.join(self.download_folder, f"text_{msg_id}.txt")
@@ -152,6 +159,7 @@ class TelegramDownloader:
                 f.write(text)
 
             if os.path.exists(tmp_path) and os.path.getsize(tmp_path) > 0:
+
                 file_id = self.storage.save_file(tmp_path, {
                     "message_id": msg_id,
                     "group_link": group_link,
@@ -167,5 +175,6 @@ class TelegramDownloader:
                 media_files.append({"category": "text", "file_id": str(file_id)})
             else:
                 print(f"⚠️ Message {msg_id}: text file empty or not created")
+
 
         print(f"💾 Saved message {msg_id} with {len(media_files)} media files")

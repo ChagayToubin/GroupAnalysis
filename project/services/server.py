@@ -3,6 +3,17 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 import time
 import threading
+import asyncio
+
+from project.services.pull_data.app.telegram_manager import TelegramManager
+pull=TelegramManager()
+
+from project.services.dataFlow.main import Menger
+data_flow=Menger()
+
+
+
+print("server up")
 
 back_app = FastAPI()
 
@@ -13,38 +24,38 @@ back_app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+async def gg():
+    for i in range(300000):
+        print("@")
+        if i % 1000 == 0:       # כל אלף הדפסות "משחררים" לולאה
+            await asyncio.sleep(0)
 
 class Identifier(BaseModel):
     id: str
 
-# משימה ראשונה
-def task_one(task_id: str):
-    print(f"Task 1 started for {task_id}")
-    time.sleep(20)  # סימולציה של עבודה ארוכה
-    print(f"Task 1 finished for {task_id}")
-
-# משימה שנייה
-def task_two(task_id: str):
-    print(f"Task 2 started for {task_id}")
-    time.sleep(40)  # סימולציה של עבודה יותר ארוכה
-    print(f"Task 2 finished for {task_id}")
 
 @back_app.post("/init")
 async def snapshot(data: Identifier):
+
     # מפעיל שני threads במקביל
-    t1 = threading.Thread(target=task_one, args=(data.id,))
-    # תהליך ראשון מתחיל למשוך דאטה
-    t2 = threading.Thread(target=task_two, args=(data.id,))
-    # תהליך שני של ניתוח הדברים ועידכונם בתוך הדאטה ביס
-    t1.start()
-    t2.start()
+    asyncio.create_task(
+        pull.monitor_group("https://t.me/likti_mohran")  )
+
+    asyncio.create_task(gg())
+    # asyncio.create_task(asyncio.to_thread(kafka_blocking))
+
+
+
+
+
+    print("-----------------8743843874387-----")
+
     # מחזיר תשובה מיידית ללקוח
     return {"message": f"שתי המשימות עבור {data.id} התחילו לרוץ במקביל"}
 
 
 @back_app.post("/get_info")
-async  def  get_info(data: Identifier):
-    # תהליך של צבי
-    print(data)
+def  get_info(data: Identifier):
 
-    return {"assa":"תהלחך שמחשב כמה יש עכשיו בדאטה ביס מכל דבר"}
+    v=data_flow.menger()
+    return v

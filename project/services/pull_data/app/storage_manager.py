@@ -18,6 +18,7 @@ class StorageManager:
             "metadata.group_link": metadata["group_link"]
         })
         if existing:
+
             return existing["_id"] # כבר שמור
 
         with open(file_path, "rb") as f:

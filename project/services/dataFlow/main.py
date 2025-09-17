@@ -1,18 +1,20 @@
-from mongoDB import DAL
+from project.services.dataFlow.mongoDB import DAL
 
-from group_type_analyzer import DataFlow
+from project.services.dataFlow.group_type_analyzer import DataFlow
 
-data = DAL()
-classifier = DataFlow()
-skip = 0
-def main(name):
+class Menger:
+    def __init__(self):
+        self.data = DAL()
+        self.classifier = DataFlow()
 
-    all_data = data.dal(skip)
-
-
-    for doc in all_data:
-        classifier.data_classifier(doc)
-
-if __name__ == "__main__":
-    while True:
-        main()
+    def menger(self):
+        all_data = self.data.dal("https://t.me/+ztOtIXepdDVkYjE0")
+        dic=self.classifier.data_classifier(all_data)
+        return dic
+#
+#
+# if __name__ == "__main__":
+#     start = Menger()
+#     while True:
+#         print("ds")
+#         start.menger()
