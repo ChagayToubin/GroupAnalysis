@@ -103,10 +103,10 @@ export default function Chart({ metrics, defaultType = "bar" }) {
           <ResponsiveContainer width="100%" height="100%">
             <RadialBarChart
               data={data}
-              innerRadius="20%"     // דונאט עדין
+              innerRadius="20%"     
               outerRadius="90%"
               startAngle={90}
-              endAngle={-270}       // כיוון שעון
+              endAngle={-270} 
             >
               <Tooltip />
               <Legend />
