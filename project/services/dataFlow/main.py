@@ -11,3 +11,4 @@ class Menger:
         all_data = self.data.dal("https://t.me/+ztOtIXepdDVkYjE0")
         dic=self.classifier.data_classifier(all_data)
         return dic
+
