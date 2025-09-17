@@ -48,6 +48,7 @@ class Manager:
     def manage(self):
         for msg in self.consumer.consume():
             file_id = msg.value["file_id"]
+            print("---")
             with TempDir() as dir_path:
                 his_type, file_path, text = self.db_handler.write_file_from_gridfs(file_id, dir_path)
                 self.data_handler = DataHandler(file_path, dir_path)

@@ -18,7 +18,7 @@ class Configs:
 
     kafka_host = os.getenv("KAFKA_HOST", "localhost")
     kafka_port = os.getenv("KAFKA_PORT", "9092")
-    topic = os.getenv("KAFKA_TOPIC", 'topic_name')
+    topic = os.getenv("KAFKA_TOPIC", 'telegram_messages')
     group_id = os.getenv("GROUP_ID", "my-consumer")
 
     kafka_configs = {
