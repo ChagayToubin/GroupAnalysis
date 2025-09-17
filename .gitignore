@@ -1,11 +1,16 @@
 # JetBrains IDEs (PyCharm, IntelliJ, etc.)
 ../../../.idea/
 *.iml
-
+.idea/
+.env
+downloader_session.session
+project\services\pull_data_(chilli)\app\downloader_session.session
 # Python bytecode
 __pycache__/
 *.py[cod]
 *$py.class
+downland
+
 
 # Virtual environments
 ../.venv/
@@ -41,4 +46,7 @@ coverage.xml
 
 # OS files
 .DS_Store
+
+
 Thumbs.db
+
