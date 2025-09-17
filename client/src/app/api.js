@@ -2,7 +2,7 @@ const API_BASE = import.meta.env.VITE_API_BASE || ''
 
 // חגי תחליף לנתיב של התחלת המעקב
 export async function getSnapshot(identifier) {
-  const res = await fetch(`${API_BASE}/init`, {
+  const res = await fetch(`${API_BASE}/api/my_init`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ id: identifier })

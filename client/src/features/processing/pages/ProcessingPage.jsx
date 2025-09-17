@@ -88,12 +88,13 @@ export default function ProcessingPage() {
     }
   }
 
-  async function onConnection() {
-    if (!identifier || isFetching) return
-    setIsFetching(true)
-    setMessage('')
+  async function onConnection(v) {
+    // if (!identifier || isFetching) return
+    // setIsFetching(true)
+    // setMessage('')
+    console.log('sdfghjkhgfdszasdfghjkjhgfdsdfghjkjhgfdsasdfghjkjhgfdxz')
     try {
-      await getSnapshot(identifier)
+      await getSnapshot(v)
       setData(null)
       setStatus('connected')
       setMessage('חובר בהצלחה')
@@ -106,12 +107,12 @@ export default function ProcessingPage() {
   }
 
   function handleConnect(id) {
+    onConnection(id)
     saveIdentifier(id)
     setIdentifier(id)
     setStatus('connected')
     setData(null)
     setLastUpdated(null)
-    onConnection()
   }
 
   function handleDisconnect() {
@@ -134,7 +135,8 @@ export default function ProcessingPage() {
   }
 
   const metrics = data?.results?.metrics || []
-
+  console.log('status:')
+  console.log(status)
   return (
     <div className="grid">
       {status === 'idle' && (
