@@ -93,7 +93,7 @@ export default function ProcessingPage() {
     setIsFetching(true)
     setMessage('')
     try {
-      const snap = await getSnapshot(identifier)
+      await getSnapshot(identifier)
       setData(null)
       setStatus('connected')
       setMessage('חובר בהצלחה')
