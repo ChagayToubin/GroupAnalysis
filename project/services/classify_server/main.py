@@ -1,4 +1,4 @@
-from GroupAnalysis.project.services.classify_server.configs.configs import Configs
+from project.services.classify_server.configs.configs import Configs
 
 
 with Configs.get_db_con() as db_client:

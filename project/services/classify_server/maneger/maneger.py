@@ -1,5 +1,5 @@
-from GroupAnalysis.project.services.classify_server.objects.temp_dir import TempDir
-from GroupAnalysis.project.services.classify_server.handlers.data_handler.data_handler import DataHandler
+from project.services.classify_server.objects.temp_dir import TempDir
+from project.services.classify_server.handlers.data_handler.data_handler import DataHandler
 
 
 class Manager:

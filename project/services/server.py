@@ -7,12 +7,12 @@ import asyncio
 import subprocess
 
 from project.services.pull_data.app.telegram_manager import TelegramManager
-pull=TelegramManager()
+
+pull = TelegramManager()
 
 from project.services.dataFlow.main import Menger
-data_flow=Menger()
 
-
+data_flow = Menger()
 
 print("server up")
 
@@ -26,10 +26,11 @@ back_app.add_middleware(
     allow_headers=["*"],
 )
 
+
 async def gg():
     for i in range(300000):
         print("@")
-        if i % 1000 == 0:       # כל אלף הדפסות "משחררים" לולאה
+        if i % 1000 == 0:  # כל אלף הדפסות "משחררים" לולאה
             await asyncio.sleep(0)
 
 
@@ -41,12 +42,10 @@ class Identifier(BaseModel):
 async def snapshot(data: Identifier):
     print(type(data))
     # מפעיל שני threads במקביל
-    # asyncio.create_task(
-    #
-    #     pull.monitor_group(data.id))
-    subprocess.Popen(["python", "server.py"], creationflags=subprocess.CREATE_NEW_CONSOLE)
+    asyncio.create_task(
+        pull.monitor_group(data.id))
 
-
+    # subprocess.Popen(["python", "server.py"], creationflags=subprocess.CREATE_NEW_CONSOLE)
 
     # asyncio.create_task(gg())
     # asyncio.create_task(asyncio.to_thread(kafka_blocking))
@@ -56,8 +55,7 @@ async def snapshot(data: Identifier):
 
 
 @back_app.post("/get_info")
-def  get_info(data: Identifier):
-
-    v=data_flow.menger(data.id)
+def get_info(data: Identifier):
+    v = data_flow.menger(data.id)
     print(v)
     return v

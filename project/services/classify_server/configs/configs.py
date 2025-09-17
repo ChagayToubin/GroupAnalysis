@@ -3,13 +3,13 @@ import json
 import torch
 import open_clip
 import torch.nn.functional as F
-from GroupAnalysis.project.services.classify_server.objects.mongodb_connection import MongoDBConnection
-from GroupAnalysis.project.services.classify_server.fetcher.mongodb_handler.mongodb_handler import MongoDBHandler
-from GroupAnalysis.project.services.classify_server.objects.kafka_consumer_connection import KafkaConsumerConnection
-from GroupAnalysis.project.services.classify_server.fetcher.mongodb_handler.my_kafka_consumer import MyKafkaConsumer
-from GroupAnalysis.project.services.classify_server.ai_class.text_classified import TextClassified
-from GroupAnalysis.project.services.classify_server.ai_class.visual_classified import VisualClassified
-from GroupAnalysis.project.services.classify_server.maneger.maneger import Manager
+from project.services.classify_server.objects.mongodb_connection import MongoDBConnection
+from project.services.classify_server.fetcher.mongodb_handler.mongodb_handler import MongoDBHandler
+from project.services.classify_server.objects.kafka_consumer_connection import KafkaConsumerConnection
+from project.services.classify_server.fetcher.mongodb_handler.my_kafka_consumer import MyKafkaConsumer
+from project.services.classify_server.ai_class.text_classified import TextClassified
+from project.services.classify_server.ai_class.visual_classified import VisualClassified
+from project.services.classify_server.maneger.maneger import Manager
 
 
 class Configs:

@@ -6,7 +6,7 @@ import csv
 from collections import Counter
 from sentence_transformers import SentenceTransformer, util
 import whisper
-from GroupAnalysis.project.services.classify_server.ai_class.file_reader import FileReader
+from project.services.classify_server.ai_class.file_reader import FileReader
 labels_csv = tf.keras.utils.get_file(
             "yamnet_class_map.csv",
             "https://raw.githubusercontent.com/tensorflow/models/master/research/audioset/yamnet/yamnet_class_map.csv")
