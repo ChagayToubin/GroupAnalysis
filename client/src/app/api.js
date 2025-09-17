@@ -2,7 +2,7 @@ const API_BASE = import.meta.env.VITE_API_BASE || ''
 
 // חגי תחליף לנתיב של התחלת המעקב
 export async function getSnapshot(identifier) {
-  const res = await fetch(`${API_BASE}/api/snapshot`, {
+  const res = await fetch(`${API_BASE}/init`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ id: identifier })
@@ -18,7 +18,7 @@ export async function getSnapshot(identifier) {
 
 // חגי תחליף לנתיב של קבלת המידע
 export async function getInformation(identifier) {
-  const res = await fetch(`${API_BASE}/api/information`, {
+  const res = await fetch(`${API_BASE}/get_info`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ id: identifier })
