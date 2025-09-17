@@ -24,11 +24,13 @@ back_app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 async def gg():
     for i in range(300000):
         print("@")
         if i % 1000 == 0:       # כל אלף הדפסות "משחררים" לולאה
             await asyncio.sleep(0)
+
 
 class Identifier(BaseModel):
     id: str
@@ -39,6 +41,7 @@ async def snapshot(data: Identifier):
 
     # מפעיל שני threads במקביל
     asyncio.create_task(
+
         pull.monitor_group("https://t.me/likti_mohran")  )
 
     asyncio.create_task(gg())

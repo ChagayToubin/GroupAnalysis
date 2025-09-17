@@ -9,6 +9,7 @@ project\services\pull_data_(chilli)\app\downloader_session.session
 __pycache__/
 *.py[cod]
 *$py.class
+downland
 
 
 # Virtual environments
