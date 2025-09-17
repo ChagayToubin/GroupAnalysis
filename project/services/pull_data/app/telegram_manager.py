@@ -1,3 +1,4 @@
+
 # # telegram_manager.py
 # import os
 # from dotenv import load_dotenv
@@ -56,10 +57,7 @@ class TelegramManager:
         self.monitored_groups = set()
 
     async def monitor_group(self, group_link: str):
-        """
-        מנטר קבוצה אחת (מוריד הודעות קיימות ומאזין להודעות חדשות)
-        מיועד לשימוש מתוך קוד אסינכרוני (כמו FastAPI)
-        """
+
         if group_link in self.monitored_groups:
             print("⚠️ Already monitoring this group.")
             return
@@ -67,13 +65,11 @@ class TelegramManager:
         self.monitored_groups.add(group_link)
         print(f"✅ Will monitor group: {group_link}")
 
-        async with self.downloader.client:
-            await self.downloader.download_group_messages(group_link)
-            await self.downloader.start_listening(group_link)
+        await self.downloader.download_group_messages(group_link)
+        await self.downloader.start_listening(group_link)
 
     def run_monitor(self, group_link: str):
-        """
-        הרצה סינכרונית מתוך סקריפט עצמאי (main.py)
-        שימוש: TelegramManager().run_monitor("https://t.me/xxx")
-        """
-        asyncio.run(self.monitor_group(group_link))
+        """הרצה סינכרונית מתוך סקריפט אחר"""
+        with self.downloader.client:
+            self.downloader.client.loop.run_until_complete(self.monitor_group(group_link))
+
