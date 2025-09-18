@@ -1,0 +1,10 @@
+pip~=25.0.1
+attrs~=25.3.0
+protobuf~=6.31.1
+pillow~=11.3.0
+filelock~=3.19.1
+pymongo~=4.15.0
+kafka-python~=2.2.15
+dotenv~=0.9.9
+python-dotenv~=1.1.1
+Telethon~=1.41.2
